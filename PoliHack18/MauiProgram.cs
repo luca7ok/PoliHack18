@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
-
+using MudBlazor.Services;
 namespace PoliHack18;
 
 public static class MauiProgram
@@ -12,7 +12,7 @@ public static class MauiProgram
             .ConfigureFonts(fonts => { fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular"); });
 
         builder.Services.AddMauiBlazorWebView();
-
+        builder.Services.AddMudServices();
 #if DEBUG
         builder.Services.AddBlazorWebViewDeveloperTools();
         builder.Logging.AddDebug();
