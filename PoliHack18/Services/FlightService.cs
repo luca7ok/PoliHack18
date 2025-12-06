@@ -59,7 +59,6 @@ namespace PoliHack18.Services
             }
             try
             {
-                
                 var token = await GetAccessTokenAsync();
                 var duration = (criteria.ReturnDate - criteria.DepartureDate).Days;
                 
@@ -122,8 +121,8 @@ namespace PoliHack18.Services
                 var priceVal = decimal.Parse(selectedFlight.GetProperty("price").GetProperty("total").GetString() ?? "0");
                 var depDate = selectedFlight.GetProperty("departureDate").GetString();
                 var retDate = selectedFlight.TryGetProperty("returnDate", out var ret) ? ret.GetString() : null;
-
                 var destinationCity = AirportData.GetCityName(destinationCode);
+                
 
                 return new TripOption
                 {
