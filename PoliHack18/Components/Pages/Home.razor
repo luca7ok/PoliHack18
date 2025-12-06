@@ -1,6 +1,8 @@
 ﻿@page "/"
 @inject NavigationManager NavManager
 @inject NavMenuHide ok
+@inject AuthService authService
+@using System.Data
 @using MudBlazor
 @using PoliHack18.Themes
 <PageTitle>Login</PageTitle>
@@ -14,6 +16,39 @@
             <MudCardContent>
                 <MudForm>
 
+                @* Email Input Field *@
+                <MudTextField T="string"
+                    Label="Email Address" 
+                    InputType="InputType.Email" 
+                    Adornment="Adornment.Start" 
+                    AdornmentIcon="@Icons.Material.Filled.Email" 
+                    Required="true" 
+                    Immediate="true"
+                    Class="mb-4"
+                    @bind-Value="emailInput"/>
+
+                @* Password Input Field *@
+                <MudTextField T="string"
+                    Label="Password" 
+                    InputType="InputType.Password" 
+                    Adornment="Adornment.Start" 
+                    AdornmentIcon="@Icons.Material.Filled.Lock" 
+                    Required="true" 
+                    Immediate="true"
+                    Class="mb-6" 
+                    @bind-Value="passwordInput"/>
+
+                @* Login Button *@
+                <MudButton 
+                    ButtonType="ButtonType.Button" 
+                    Variant="Variant.Filled" 
+                    Color="Color.Primary" 
+                    Size="Size.Large" 
+                    EndIcon="@Icons.Material.Filled.Login" 
+                    FullWidth="true"
+                    @onclick="HandleLogin">
+                    LOG IN
+                </MudButton>
                     <MudTextField T="string"
                                   Label="Email Address"
                                   InputType="InputType.Email"
@@ -51,6 +86,100 @@
         </MudCard>
     </MudContainer>
 </MudContainer>
+</MudContainer>
+<button @onclick="ID">BagaNAvu</button>
+<button @onclick="ID1">StergeNAvu</button>
+<button @onclick="Parola">VerificaHash</button>
+<table class="table table-striped table-bordered">
+    <thead>
+        <tr>
+            @* Loop through the columns to create the header row *@
+            @foreach (System.Data.DataColumn col in dt.Columns)
+            {
+                    <th>@col.ColumnName</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @* Loop through the rows to create the data *@
+        @foreach (System.Data.DataRow row in dt.Rows)
+        {
+                <tr>
+                    @* Loop through the row items to create individual cells *@
+                    @foreach (var item in row.ItemArray)
+                    {
+                            <td>@(item ?? string.Empty)</td>
+                    }
+                </tr>
+        }
+    </tbody>
+</table>
+<button class="btn btn-primary" @onclick="Afiseaza">Click me</button>
+@code
+{
+    private string emailInput = string.Empty;
+    private string passwordInput = string.Empty;
+    private string errorMessage = string.Empty;
+
+    private void HandleLogin()
+    {
+        errorMessage = string.Empty; // Clear previous error
+
+        var result = authService.LoginUser(emailInput, passwordInput, out DataRow? userData);
+
+        if (result == AuthService.LoginResult.Success && userData != null)
+        {
+            string userId = userData["id"].ToString();
+            ok.SetUserId(userId);
+
+            NavManager.NavigateTo("/flight-test");
+
+            Application.Current.MainPage.DisplayAlert("Login Success", $"Welcome, {userData["email"]}.", "OK");
+        }
+        else
+        {
+            // 5. Login failed, set error message
+            errorMessage = result switch
+            {
+                AuthService.LoginResult.UserNotFound => "Email not found. Please check your email address.",
+                AuthService.LoginResult.InvalidCredentials => "Invalid password. Please try again.",
+                AuthService.LoginResult.DatabaseError => "A service error occurred. Please try again later.",
+                _ => "An unknown error occurred."
+            };
+            Application.Current.MainPage.DisplayAlert("Login not succeded", "Wrong email/password", "OK");
+        }
+    }
+
+
+
+    private void ID()
+    {
+        ok.SetUserId("DASDAS");
+        Application.Current.MainPage.DisplayAlert("Text", "DA", "Cancel");
+    }
+    private void ID1()
+    {
+        ok.SetUserId("");
+        Application.Current.MainPage.DisplayAlert("Text", "DA", "Cancel");
+    }
+    private void Parola()
+    {
+        string parola = "Parola123";
+        string hashparola = Password.HashPassword(parola);
+        Debug.WriteLine($"Parola este{parola},iar hash:{hashparola}");
+        bool parola2=Password.VerifyPassword(parola,hashparola);
+        Debug.WriteLine($"Raspunsul:{parola2}");
+    }
+    System.Data.DataTable dt = new System.Data.DataTable();
+    string s = string.Empty;
+    private void Afiseaza()
+    {
+
+        string query = "SELECT * FROM users";
+        dt = Database.ExecutaQuery(query, null);
+
+        s = dt.ToString();
+    }
 
 @code
 {
