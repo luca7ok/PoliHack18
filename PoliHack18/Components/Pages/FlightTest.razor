@@ -1,0 +1,129 @@
+@page "/flight-test"
+@using PoliHack18.Services
+@using PoliHack18.Models
+@inject IFlightService FlightService
+@inject ISnackbar Snackbar
+
+<MudContainer MaxWidth="MaxWidth.Small" Class="mt-8">
+    <MudText Typo="Typo.h4" Align="Align.Center" Class="mb-6">✈️ Flight Roulette</MudText>
+
+    <MudPaper Class="pa-6" Elevation="3">
+        <MudGrid>
+            <!-- Origin Input -->
+            <MudItem xs="12">
+                <MudTextField @bind-Value="_origin"
+                              Label="Origin (IATA Code)"
+                              HelperText="Try 'MAD', 'JFK', 'LHR', 'PAR'"
+                              Variant="Variant.Outlined"
+                              Adornment="Adornment.Start"
+                              AdornmentIcon="@Icons.Material.Filled.FlightTakeoff"/>
+            </MudItem>
+
+            <MudItem xs="6">
+                <MudNumericField @bind-Value="_maxPrice"
+                                 Label="Max Budget"
+                                 Variant="Variant.Outlined"
+                                 Adornment="Adornment.Start"
+                                 AdornmentIcon="@Icons.Material.Filled.Euro"/>
+            </MudItem>
+
+            <MudItem xs="6">
+                <MudDatePicker @bind-Date="_date"
+                               Label="Departure"
+                               Variant="Variant.Outlined"/>
+            </MudItem>
+
+            <MudItem xs="12">
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           FullWidth="true"
+                           OnClick="FindRandomFlight"
+                           Disabled="@_isLoading"
+                           Class="py-3">
+                    @if (_isLoading)
+                    {
+                        <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2"/>
+                        <MudText>Searching...</MudText>
+                    }
+                    else
+                    {
+                        <MudText>Inspire Me! 🎲</MudText>
+                    }
+                </MudButton>
+            </MudItem>
+        </MudGrid>
+    </MudPaper>
+
+    @if (_selectedTrip != null)
+    {
+        <MudCard Class="mt-6 animate-fade-in" Elevation="4">
+            <MudCardHeader>
+                <CardHeaderAvatar>
+                    <MudAvatar Color="Color.Secondary">
+                        <MudIcon Icon="@Icons.Material.Filled.AirplanemodeActive"/>
+                    </MudAvatar>
+                </CardHeaderAvatar>
+                <CardHeaderContent>
+                    <MudText Typo="Typo.h6">Destination Found!</MudText>
+                    <MudText Typo="Typo.body2">@_selectedTrip.FlightInfo</MudText>
+                </CardHeaderContent>
+            </MudCardHeader>
+            <MudCardMedia
+                Image="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=800&auto=format&fit=crop"
+                Height="200"/>
+            <MudCardContent>
+                <MudText Typo="Typo.h3" Align="Align.Center" Color="Color.Primary">
+                    @_selectedTrip.Destination
+                </MudText>
+                <MudText Typo="Typo.h5" Align="Align.Center" Class="mt-2">
+                    €@_selectedTrip.PricePerPerson
+                </MudText>
+            </MudCardContent>
+        </MudCard>
+    }
+    else if (_hasSearched && !_isLoading)
+    {
+        <MudAlert Severity="Severity.Warning" Class="mt-4">
+            No flights found! <br/>
+            <b>Note:</b> The Test API works best with major hubs like MAD, JFK, or LHR.
+        </MudAlert>
+    }
+</MudContainer>
+
+<style>
+    .animate-fade-in {
+        animation: fadeIn 0.5s ease-in;
+    }
+
+    @@keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+@code {
+    private string _origin = "MAD";
+    private decimal _maxPrice = 500;
+    private DateTime? _date = DateTime.Today.AddDays(7);
+
+    private TripOption? _selectedTrip;
+    private bool _isLoading = false;
+    private bool _hasSearched = false;
+
+    private async Task FindRandomFlight()
+    {
+        _isLoading = true;
+        _hasSearched = true;
+        _selectedTrip = null;
+
+        await Task.Run(() => { _selectedTrip = FlightService.GetRandomFlight(_origin, _maxPrice, _date ?? DateTime.Today); });
+        _isLoading = false;
+    }
+
+}

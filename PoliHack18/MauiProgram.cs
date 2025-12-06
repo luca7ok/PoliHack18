@@ -1,5 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
 using MudBlazor.Services;
+using Microsoft.Extensions.Configuration;
+using System.Reflection;
+
 namespace PoliHack18;
 
 public static class MauiProgram
@@ -13,6 +16,7 @@ public static class MauiProgram
 
         builder.Services.AddMauiBlazorWebView();
         builder.Services.AddMudServices();
+        builder.Services.AddSingleton<Services.IFlightService, Services.FlightService>();   
 #if DEBUG
         builder.Services.AddBlazorWebViewDeveloperTools();
         builder.Logging.AddDebug();

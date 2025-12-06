@@ -1,8 +1,9 @@
-﻿
-@page "/"
+﻿@page "/"
+@inject NavigationManager NavManager
 
-
-<MudCard Style="background-color:yellow;"   Elevation="4">
+<MudContainer MaxWidth="MaxWidth.Medium" Class="mt-8">
+    
+    <MudCard Style="background-color:yellow;" Elevation="4" Class="mb-6">
         <MudCardContent>
             <MudText>Story of the day</MudText>
             <MudText Typo="Typo.body2">The quick, brown fox jumps over a lazy dog.</MudText>
@@ -11,3 +12,14 @@
             <MudButton Variant="Variant.Text" Color="Color.Success">Learn more</MudButton>
         </MudCardActions>
     </MudCard>
+
+    <MudButton Variant="Variant.Filled" 
+               Color="Color.Primary" 
+               Size="Size.Large" 
+               FullWidth="true" 
+               StartIcon="@Icons.Material.Filled.FlightTakeoff"
+               OnClick="@(() => NavManager.NavigateTo("/flight-test"))">
+        Play Flight Roulette
+    </MudButton>
+
+</MudContainer>
