@@ -1,0 +1,77 @@
+@page "/my-trips"
+@using PoliHack18.Models
+@using PoliHack18.Services
+@using PoliHack18.Repository
+@inject NavigationManager NavManager
+
+<div class="container mt-4">
+    <h3>My Trips</h3>
+
+    @if (!UserSession.IsLoggedIn)
+    {
+        <div class="alert alert-warning">
+            You must be logged in to view your trips. <a href="/">Go to Login</a>
+        </div>
+    }
+    else if (MySavedTrips == null)
+    {
+        <p>Loading...</p>
+    }
+    else if (MySavedTrips.Count == 0)
+    {
+        <div class="text-center mt-5">
+            <p class="text-muted">You haven't saved any trips yet.</p>
+            <button class="btn btn-primary" @onclick="GoToSearch">Find a Trip Now</button>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var trip in MySavedTrips)
+            {
+                <div class="col-md-6 mb-4">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="m-0">@trip.Destination</h5>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>🛫 Flight:</strong> @trip.FlightInfo</p>
+                            <p><strong>🏨 Hotel:</strong> @trip.HotelInfo</p>
+                            <hr />
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="text-muted">Total Price:</span>
+                                <h4 class="text-success m-0">€@trip.TotalPrice</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    private List<TripOption>? MySavedTrips;
+
+    protected override void OnInitialized()
+    {
+        if (UserSession.IsLoggedIn)
+        {
+            try
+            {
+                var repo = new TripRepository();
+                MySavedTrips = repo.GetTripsByUser(UserSession.CurrentUserId);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error loading trips: {ex.Message}");
+                MySavedTrips = new List<TripOption>();
+            }
+        }
+    }
+
+    private void GoToSearch()
+    {
+        NavManager.NavigateTo("flight-test");
+    }
+}

@@ -8,4 +8,3 @@ public class TripSearchCriteria
     public DateTime ReturnDate { get; set; } = DateTime.Today.AddDays(7);
     public int NumberOfPeople { get; set; } = 1;
 }
-

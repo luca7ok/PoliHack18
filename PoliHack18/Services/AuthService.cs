@@ -1,5 +1,6 @@
 using System.Data;
 using System.Diagnostics;
+
 namespace PoliHack18.Services
 {
     public class AuthService
@@ -12,6 +13,7 @@ namespace PoliHack18.Services
             DatabaseError,
             UserNotFound
         }
+
         public LoginResult LoginUser(string email, string password, out DataRow? userData)
         {
             userData = null;
@@ -50,6 +52,11 @@ namespace PoliHack18.Services
 
                 if (Password.VerifyPassword(password, hashedPassword))
                 {
+                    Guid userId;
+                    if (userData["id"] is Guid g) userId = g;
+                    else userId = Guid.Parse(userData["id"].ToString());
+
+                    UserSession.Login(userId);
                     return LoginResult.Success;
                 }
                 else

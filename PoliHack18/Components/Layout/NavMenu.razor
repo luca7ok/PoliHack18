@@ -1,17 +1,47 @@
-﻿<div >
-    <ul >
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span>
-                <span class="titel">Home</span>
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="flight-test" Match="NavLinkMatch.All">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span>
-                <span class="titel">Home</span>
-            </NavLink>
-        </li>
-        
-    </ul>
-</div>
+﻿@* NavMenu.razor *@
+
+<MudNavMenu Class="horizontal-nav">
+    <MudNavLink Href="flight-test"
+                Icon="@Icons.Material.Filled.Flight"
+                IconColor="Color.Primary"
+                Match="NavLinkMatch.All">
+        New Trip
+    </MudNavLink>
+
+    <MudNavLink Href="my-trips"
+                Icon="@Icons.Material.Filled.Book"
+                IconColor="Color.Primary"
+                Match="NavLinkMatch.All">
+        My History
+    </MudNavLink>
+</MudNavMenu>
+
+<style>
+    .horizontal-nav {
+        display: flex;
+        flex-direction: row;
+        gap: 8px;
+        align-items: center;
+    }
+
+    .mud-nav-link {
+        padding: 12px 24px;
+        border-radius: 8px;
+        margin: 0;
+        transition: all 0.2s ease;
+    }
+
+    .mud-nav-link:hover {
+        background-color: #e3f2fd;
+    }
+
+    .mud-nav-link.active {
+        background-color: #bbdefb;
+        color: #1976d2;
+        font-weight: 500;
+    }
+
+    .mud-nav-link .mud-icon-root {
+        margin-right: 12px;
+    }
+</style>

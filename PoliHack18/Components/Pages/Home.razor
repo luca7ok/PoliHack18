@@ -22,6 +22,7 @@
                               Required="true" 
                               Immediate="true"
                               Class="mb-4"
+                              Disabled="@isLoading"
                               @bind-Value="emailInput"/>
 
                 @* Password Input Field *@
@@ -32,7 +33,8 @@
                               AdornmentIcon="@Icons.Material.Filled.Lock" 
                               Required="true" 
                               Immediate="true"
-                              Class="mb-6" 
+                              Class="mb-6"
+                              Disabled="@isLoading"
                               @bind-Value="passwordInput"/>
 
                 @* Login Button *@
@@ -41,11 +43,21 @@
                     Variant="Variant.Filled" 
                     Color="Color.Primary" 
                     Size="Size.Large" 
-                    EndIcon="@Icons.Material.Filled.Login" 
+                    EndIcon="@(isLoading ? null : Icons.Material.Filled.Login)" 
                     FullWidth="true"
+                    Disabled="@isLoading"
                     @onclick="HandleLogin">
-                    LOG IN
+                    @if (isLoading)
+                    {
+                        <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                        <MudText Class="ms-2">Logging in...</MudText>
+                    }
+                    else
+                    {
+                        <span>LOG IN</span>
+                    }
                 </MudButton>
+                
                 <MudText Align="Align.Center" Class="mt-4">
                     <MudLink Href="/flight-test" Color="Color.Primary">
                         Still don't have an account?
@@ -61,32 +73,45 @@
     private string emailInput = string.Empty;
     private string passwordInput = string.Empty;
     private string errorMessage = string.Empty;
+    private bool isLoading = false;
 
-    private void HandleLogin()
+    private async Task HandleLogin()
     {
-        errorMessage = string.Empty; 
+        errorMessage = string.Empty;
+        isLoading = true;
 
-        var result = authService.LoginUser(emailInput, passwordInput, out DataRow? userData);
+        StateHasChanged();
 
-        if (result == AuthService.LoginResult.Success && userData != null)
+        await Task.Run(() =>
         {
-            string userId = userData["id"].ToString();
-            ok.SetUserId(userId);
+            var result = authService.LoginUser(emailInput, passwordInput, out DataRow? userData);
 
-            NavManager.NavigateTo("/flight-test");
-
-            Application.Current.MainPage.DisplayAlert("Login Success", $"Welcome, {userData["email"]}.", "OK");
-        }
-        else
-        {
-            errorMessage = result switch
+            InvokeAsync(() =>
             {
-                AuthService.LoginResult.UserNotFound => "Email not found. Please check your email address.",
-                AuthService.LoginResult.InvalidCredentials => "Invalid password. Please try again.",
-                AuthService.LoginResult.DatabaseError => "A service error occurred. Please try again later.",
-                _ => "An unknown error occurred."
-            };
-            Application.Current.MainPage.DisplayAlert("Login not succeded", "Wrong email/password", "OK");
-        }
+                if (result == AuthService.LoginResult.Success && userData != null)
+                {
+                    string userId = userData["id"].ToString();
+                    ok.SetUserId(userId);
+
+                    NavManager.NavigateTo("/flight-test");
+
+                    Application.Current.MainPage.DisplayAlert("Login Success", $"Welcome, {userData["email"]}.", "OK");
+                }
+                else
+                {
+                    errorMessage = result switch
+                    {
+                        AuthService.LoginResult.UserNotFound => "Email not found. Please check your email address.",
+                        AuthService.LoginResult.InvalidCredentials => "Invalid password. Please try again.",
+                        AuthService.LoginResult.DatabaseError => "A service error occurred. Please try again later.",
+                        _ => "An unknown error occurred."
+                    };
+                    Application.Current.MainPage.DisplayAlert("Login not succeded", "Wrong email/password", "OK");
+                }
+
+                isLoading = false;
+                StateHasChanged();
+            });
+        });
     }
 }

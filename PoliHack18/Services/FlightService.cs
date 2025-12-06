@@ -3,6 +3,7 @@ using PoliHack18.Constants;
 using Microsoft.Extensions.Configuration;
 using System.Net.Http.Headers;
 using System.Text.Json;
+using PoliHack18.Repository;
 
 namespace PoliHack18.Services
 {
@@ -24,7 +25,7 @@ namespace PoliHack18.Services
 
         private async Task<string> GetAccessTokenAsync()
         {
-            if (!string.IsNullOrEmpty(_accessToken) && DateTime.UtcNow < _tokenExpiry) 
+            if (!string.IsNullOrEmpty(_accessToken) && DateTime.UtcNow < _tokenExpiry)
                 return _accessToken;
 
             try
@@ -109,17 +110,31 @@ namespace PoliHack18.Services
 
                     if (hotelOffer != null)
                     {
-                        return new TripOption
+                        Guid userID = UserSession.CurrentUserId;
+
+                        var trip = new TripOption
                         {
                             Destination = AirportData.GetCityName(destCode),
                             DestinationCode = destCode,
                             FlightInfo = $"Flight: {depDate} to {retDate} (${flightPricePerPerson}/person)",
                             PricePerPerson =
                                 flightPricePerPerson +
-                                (hotelOffer.Price / criteria.NumberOfPeople), // Approx total per person
+                                (hotelOffer.Price / criteria.NumberOfPeople),
                             TotalPrice = totalFlightCost + hotelOffer.Price,
                             HotelInfo = $"{hotelOffer.HotelName} ({hotelOffer.Price} {hotelOffer.Currency} total)"
                         };
+
+                        try
+                        {
+                            var repo = new TripRepository();
+                            repo.AddTrip(trip, userID);
+                        }
+                        catch (Exception e)
+                        {
+                            System.Diagnostics.Debug.WriteLine($"Could not save trip: {e.Message}");
+                        }
+
+                        return trip;
                     }
                 }
 
