@@ -86,3 +86,55 @@ h1:focus {
         padding-left: env(safe-area-inset-left);
     }
 }
+@media screen and (max-width: 640px) {
+    
+    .sidebar {
+        position: fixed;
+        bottom: 0px;
+        width: 100%;
+    }
+
+        .sidebar ul {
+            display: flex !important;
+            flex-direction: row !important;
+            width: 100%;
+            justify-content: space-around;
+            padding: 0;
+            margin: 0;
+            background-color: forestgreen;
+        }
+
+            .sidebar ul li {
+                flex: 1;
+                text-align: center;
+                padding: 0 !important;
+                margin: 0;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                background-color: forestgreen;
+            }
+
+                .sidebar ul li .nav-link {
+                    /* Ensure the NavLink link takes up all available space */
+                    width: 100%;
+                    padding: 5px 0;
+                    /* Use Flexbox here to stack icon and hidden title vertically */
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center; /* Centers icon/text horizontally */
+                }
+
+                .sidebar ul li span {
+                    margin: 0;
+                    align-items:center;
+                }
+
+                .sidebar ul li .titel {
+                    display: none !important; /* Keep your title hidden */
+                }
+    main {
+        padding-bottom: 70px; /* Must match the new .sidebar height */
+    }
+}
