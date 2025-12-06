@@ -56,6 +56,7 @@ namespace PoliHack18.Services
 
         public async Task<TripOption?> GetRandomFlight(TripSearchCriteria criteria)
         {
+
             if (!AirportData.IsEuropeanAirport(criteria.Origin))
                 throw new ArgumentException($"Origin airport '{criteria.Origin}' must be a European airport.");
 
@@ -127,7 +128,11 @@ namespace PoliHack18.Services
             }
             catch (Exception ex)
             {
+                Class1.s = ex.Message;
                 System.Diagnostics.Debug.WriteLine($"Error: {ex.Message}");
+                MainThread.BeginInvokeOnMainThread(async () => {
+                    await Application.Current.MainPage.DisplayAlert("Error: ", ex.ToString(), "OK");
+                });
                 return null;
             }
         }
