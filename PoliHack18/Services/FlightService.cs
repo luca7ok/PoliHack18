@@ -12,6 +12,7 @@ namespace PoliHack18.Services
         private readonly string _clientSecret;
         private readonly HttpClient _httpClient;
         private string? _accessToken;
+        private DateTime _tokenExpiry;
 
         public FlightService(IConfiguration configuration)
         {
@@ -23,7 +24,8 @@ namespace PoliHack18.Services
 
         private async Task<string> GetAccessTokenAsync()
         {
-            if (!string.IsNullOrEmpty(_accessToken)) return _accessToken;
+            if (!string.IsNullOrEmpty(_accessToken) && DateTime.UtcNow < _tokenExpiry) 
+                return _accessToken;
 
             try
             {
@@ -41,6 +43,8 @@ namespace PoliHack18.Services
                 var tokenResponse = JsonSerializer.Deserialize<JsonElement>(responseBody);
 
                 _accessToken = tokenResponse.GetProperty("access_token").GetString();
+                var expiresIn = tokenResponse.GetProperty("expires_in").GetInt32();
+                _tokenExpiry = DateTime.UtcNow.AddSeconds(expiresIn - 60);
                 return _accessToken ?? "";
             }
             catch (Exception ex)
@@ -98,7 +102,7 @@ namespace PoliHack18.Services
                     if (remainingBudget < (30 * duration * criteria.NumberOfPeople)) continue;
 
                     var depDate = flight.GetProperty("departureDate").GetString();
-                    var retDate = criteria.ReturnDate.ToString();
+                    var retDate = criteria.ReturnDate.ToString("yyyy-MM-dd");
 
                     var hotelOffer = await GetHotelForTrip(destCode, depDate, retDate, criteria.NumberOfPeople,
                         remainingBudget, token);
