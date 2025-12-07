@@ -2,7 +2,6 @@ using MudBlazor;
 
 namespace PoliHack18.Themes;
 
-
 public static class AppTheme
 {
     public static MudTheme Default => new MudTheme()
@@ -11,13 +10,13 @@ public static class AppTheme
         {
             Primary = "#9E7448",
             Secondary = "#743725",
-            Background = "#9E7448",
+            Background = "#766153",
             TextPrimary = "#27120F"
         },
         LayoutProperties = new LayoutProperties()
         {
             DefaultBorderRadius = "12px",
-            DrawerWidthLeft = "260px"
+            DrawerWidthLeft = "260px",
         }
     };
 }

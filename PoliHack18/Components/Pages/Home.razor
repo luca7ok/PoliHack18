@@ -3,71 +3,70 @@
 @inject NavMenuHide ok
 @inject AuthService authService
 @using System.Data
+
 <PageTitle>Login</PageTitle>
-<MudContainer Class="center-container">
-<MudContainer MaxWidth="MaxWidth.ExtraSmall" >
-    <MudCard Elevation="25" Class="pa-8">
-        <MudCardHeader>
-            <MudText Typo="Typo.h5" Class="mb-4">Welcome Back!</MudText>
-        </MudCardHeader>
-        <MudCardContent>
-            <MudForm>
 
-                @* Email Input Field *@
-                <MudTextField T="string"
-                              Label="Email Address" 
-                              InputType="InputType.Email" 
-                              Adornment="Adornment.Start" 
-                              AdornmentIcon="@Icons.Material.Filled.Email" 
-                              Required="true" 
-                              Immediate="true"
-                              Class="mb-4"
-                              Disabled="@isLoading"
-                              @bind-Value="emailInput"/>
+<MudContainer Class="center-container" Style="margin-top: 15vh;">
+    <MudContainer MaxWidth="MaxWidth.ExtraSmall" >
+        <MudCard Elevation="25" Class="pa-8" Style="background-color:#EFE2D2">
+            <MudCardHeader>
+                <MudText Typo="Typo.h4" Class="mb-4">Welcome Back!</MudText>
+            </MudCardHeader>
+            <MudCardContent>
+                <MudForm>
 
-                @* Password Input Field *@
-                <MudTextField T="string"
-                              Label="Password" 
-                              InputType="InputType.Password" 
-                              Adornment="Adornment.Start" 
-                              AdornmentIcon="@Icons.Material.Filled.Lock" 
-                              Required="true" 
-                              Immediate="true"
-                              Class="mb-6"
-                              Disabled="@isLoading"
-                              @bind-Value="passwordInput"/>
+                    <MudTextField T="string"
+                                  Label="Email Address"
+                                  InputType="InputType.Email"
+                                  Adornment="Adornment.Start"
+                                  AdornmentIcon="@Icons.Material.Filled.Email"
+                                  Required="true"
+                                  Immediate="true"
+                                  Class="mb-4"
+                                  Disabled="@isLoading"
+                                  @bind-Value="emailInput"/>
 
-                @* Login Button *@
-                <MudButton 
-                    ButtonType="ButtonType.Button" 
-                    Variant="Variant.Filled" 
-                    Color="Color.Primary" 
-                    Size="Size.Large" 
-                    EndIcon="@(isLoading ? null : Icons.Material.Filled.Login)" 
-                    FullWidth="true"
-                    Disabled="@isLoading"
-                    @onclick="HandleLogin">
-                    @if (isLoading)
-                    {
-                        <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
-                        <MudText Class="ms-2">Logging in...</MudText>
-                    }
-                    else
-                    {
-                        <span>LOG IN</span>
-                    }
-                </MudButton>
-                
-                <MudText Align="Align.Center" Class="mt-4">
-                    <MudLink Href="/sign-up" Color="Color.Primary">
-                        Still don't have an account?
-                    </MudLink>
-                </MudText>
-            </MudForm>
-        </MudCardContent>
-    </MudCard>    
+                    <MudTextField T="string"
+                                  Label="Password"
+                                  InputType="InputType.Password"
+                                  Adornment="Adornment.Start"
+                                  AdornmentIcon="@Icons.Material.Filled.Lock"
+                                  Required="true"
+                                  Immediate="true"
+                                  Class="mb-6"
+                                  Disabled="@isLoading"
+                                  @bind-Value="passwordInput"/>
+
+                    <MudButton ButtonType="ButtonType.Button"
+                               Variant="Variant.Filled"
+                               Color="Color.Primary"
+                               Size="Size.Large"
+                               EndIcon="@(isLoading ? null : Icons.Material.Filled.Login)"
+                               FullWidth="true"
+                               Disabled="@isLoading"
+                               @onclick="HandleLogin">
+                        @if (isLoading)
+                        {
+                            <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true"/>
+                            <MudText Class="ms-2">Logging in...</MudText>
+                        }
+                        else
+                        {
+                            <span>LOG IN</span>
+                        }
+                    </MudButton>
+
+                    <MudText Align="Align.Center" Class="mt-4">
+                        <MudLink Href="/sign-up" Color="Color.Primary">
+                            Still don't have an account?
+                        </MudLink>
+                    </MudText>
+                </MudForm>
+            </MudCardContent>
+        </MudCard>
+    </MudContainer>
 </MudContainer>
-</MudContainer>
+
 @code
 {
     private string emailInput = string.Empty;
