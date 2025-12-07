@@ -135,7 +135,7 @@
                     string userId = userData["id"].ToString();
                     ok.SetUserId(userId);
 
-                    NavManager.NavigateTo("/flight-test", replace: true);
+                    NavManager.NavigateTo("/flight-test", replace: true, forceLoad:true);
                 }
                 else
                 {

@@ -28,18 +28,47 @@
     .horizontal-nav .mud-nav-link.active .mud-icon-root {
         color: #EFE2D2 !important;
     }
+
+    .logout-button {
+        color: #CFCBC4 !important;
+        cursor: pointer;
+    }
+
+    .logout-button:hover {
+        color: #EFE2D2 !important;
+    }
 </style>
 
-<MudNavMenu Class="horizontal-nav">
-    <MudNavLink Href="flight-test"
-                Icon="@Icons.Material.Filled.Flight"
-                Match="NavLinkMatch.All">
-        New Trip
-    </MudNavLink>
+@if (UserSession.IsLoggedIn)
+{
+    <MudNavMenu Class="horizontal-nav">
+        <MudNavLink Href="flight-test"
+                    Icon="@Icons.Material.Filled.Flight"
+                    Match="NavLinkMatch.All">
+            New Trip
+        </MudNavLink>
 
-    <MudNavLink Href="my-trips"
-                Icon="@Icons.Material.Filled.Book"
-                Match="NavLinkMatch.All">
-        My History
-    </MudNavLink>
-</MudNavMenu>
+        <MudNavLink Href="my-trips"
+                    Icon="@Icons.Material.Filled.Book"
+                    Match="NavLinkMatch.All">History
+        </MudNavLink>
+
+        <MudNavLink OnClick="HandleLogout"
+                    Icon="@Icons.Material.Filled.Logout"
+                    Class="logout-button">
+            Logout
+        </MudNavLink>
+    </MudNavMenu>
+}
+
+@code {
+    [Inject] private NavigationManager NavManager { get; set; }
+
+    private void HandleLogout()
+    {
+        UserSession.Logout();
+
+        NavManager.NavigateTo("/", forceLoad: true);
+    }
+
+}
